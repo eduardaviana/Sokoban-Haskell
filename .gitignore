@@ -1,0 +1,11 @@
+.stack-work/
+dist/
+dist-newstyle/
+
+*.hi
+*.o
+*.exe
+
+
+*.swp
+
