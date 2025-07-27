@@ -12,9 +12,7 @@ import System.FilePath ((</>))
 import Game.Types
 import Game.Logic
 import Game.SokobanMap
-
-clearScreen :: IO ()
-clearScreen = putStr "\ESC[2J\ESC[H"
+import Game.IO
 
 -- === Loop do jogo ===
 gameLoop :: A.Array (Int, Int) Tile -> (Int, Int) -> IO ()
@@ -25,8 +23,7 @@ gameLoop gameMap currentPlayerPos = do
     putStrLn $ "Posição: " ++ show currentPlayerPos
     putStrLn "Use w/a/s/d para mover, q para sair"
 
-    tecla <- getChar
-    _ <- getChar -- Consumir o '\n'
+    tecla <- getCharInstant
 
     if tecla == 'q'
         then putStrLn "Fim do jogo!"

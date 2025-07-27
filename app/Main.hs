@@ -1,6 +1,7 @@
 module Main where
 
 import Game.GameLoop (start)
+import Game.IO
 import Control.Concurrent (threadDelay)
 
 mostrarMenu :: IO()
@@ -16,12 +17,6 @@ mostrarMenu = do
     putStrLn "2. Selecionar Dificuldade"
     putStrLn "3. Sair"
     putStrLn "" 
-
-clearScreen :: IO ()
-clearScreen = putStr "\ESC[2J\ESC[H"
-
-tratarOpcao :: String -> Bool
-tratarOpcao escolha = all (\c -> c `elem` "123") escolha
 
 dificuldade :: IO String
 dificuldade = do
@@ -51,7 +46,7 @@ menu "options" dificuldadeAtual = do
     clearScreen
     mostrarMenu
     escolha <- getLine
-    if tratarOpcao escolha
+    if tratarOpcao escolha "123"
         then menu escolha dificuldadeAtual
         else do
             putStrLn "Escolha inválida! Digite uma opção válida!"
