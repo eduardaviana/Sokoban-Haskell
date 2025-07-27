@@ -12,13 +12,13 @@ common warnings
   ghc-options:       -Wall
 
 library
-  exposed-modules:  Types
-                  , SokobanMap
-                  , Logic
-                  , GameLoop
-  hs-source-dirs:   src/Game
+  exposed-modules:  Game.Types
+                  , Game.SokobanMap
+                  , Game.Logic
+                  , Game.GameLoop
+  hs-source-dirs:   src
   default-language: Haskell2010
-  build-depends:    base >= 4.18 && < 4.19 
+  build-depends:    base >= 4.17 && < 4.18
                   , array
                   , bytestring
                   , aeson
@@ -29,12 +29,13 @@ executable Sokoban-Haskell
   import:            warnings
   main-is:           Main.hs
   hs-source-dirs:    app
+                     src
   default-language:  Haskell2010
-  build-depends:
-      base >= 4.18 && < 4.19
-    , array
-    , bytestring
-    , aeson
-    , filepath
-    , directory
-    , Sokoban-Haskell 
+  build-depends:     base >= 4.17 && < 4.18
+                   , array
+                   , bytestring
+                   , aeson
+                   , filepath
+                   , directory
+                   , Sokoban-Haskell
+

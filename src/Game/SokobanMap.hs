@@ -1,4 +1,4 @@
-module SokobanMap ( 
+module Game.SokobanMap ( 
     inBounds,
     loadMapFromJSON
 ) where
@@ -10,7 +10,7 @@ import System.Exit (exitFailure)
 import System.Directory (getCurrentDirectory)
 import System.FilePath ((</>))
 
-import Types  
+import Game.Types  
 
 inBounds :: ((Int, Int), (Int, Int)) -> (Int, Int) -> Bool
 inBounds ((minY, minX), (maxY, maxX)) (y, x) =

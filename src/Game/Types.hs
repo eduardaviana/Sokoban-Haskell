@@ -1,6 +1,6 @@
 {-# LANGUAGE DeriveGeneric #-}
 
-module Types ( 
+module Game.Types ( 
     Tile(..),
     MapWrapper(..),
     tileToChar,

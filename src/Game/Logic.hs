@@ -1,12 +1,12 @@
-module Logic ( 
+module Game.Logic ( 
     direcao,
     move,
     printMap
 ) where
 
 import qualified Data.Array as A
-import Types  
-import SokobanMap 
+import Game.Types  
+import Game.SokobanMap 
 
 direcao :: Char -> (Int, Int)
 direcao 'w' = (-1, 0)
@@ -34,3 +34,4 @@ printMap gameMap playerPos = do
         putStrLn ""
         ) [minY..maxY]
     putStrLn ""
+

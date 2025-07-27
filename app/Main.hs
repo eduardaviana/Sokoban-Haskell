@@ -1,5 +1,6 @@
 module Main where
 
+import Game.GameLoop (start)
 import Control.Concurrent (threadDelay)
 
 mostrarMenu :: IO()
@@ -20,34 +21,57 @@ clearScreen :: IO ()
 clearScreen = putStr "\ESC[2J\ESC[H"
 
 tratarOpcao :: String -> Bool
-tratarOpcao escolha
-    | all (elem "123") escolha = True
-    | otherwise = False
+tratarOpcao escolha = all (\c -> c `elem` "123") escolha
 
-gameLoop :: IO()
-gameLoop = putStrLn "ENTROU JOGO"
+dificuldade :: IO String
+dificuldade = do
+    clearScreen
+    putStrLn "Selecione a dificuldade:"
+    putStrLn "1. Fácil"
+    putStrLn "2. Médio"
+    putStrLn "3. Difícil"
+    putStrLn ""
 
-dificuldade :: IO()
-dificuldade = putStrLn "ALTERAR DIFICULDADE"
+    escolha <- getLine
+
+    case escolha of
+        "1" -> return "easy.json"
+        "2" -> return "medium.json"
+        "3" -> return "hard.json"
+        _   -> do
+            putStrLn "Escolha inválida! Tente novamente."
+            threadDelay 1000000
+            dificuldade
 
 quit :: IO()
 quit = putStrLn "SAIU DO JOGO"
 
-menu :: String -> IO()
-menu "init" = do
+menu :: String -> String -> IO()
+menu "options" dificuldadeAtual = do
     clearScreen
     mostrarMenu
     escolha <- getLine
     if tratarOpcao escolha
-        then menu escolha
+        then menu escolha dificuldadeAtual
         else do
             putStrLn "Escolha inválida! Digite uma opção válida!"
             threadDelay 600000
-            menu "init"
+            menu "options" dificuldadeAtual
 
-menu "1" = gameLoop
-menu "2" = dificuldade
-menu "3" = quit
+menu "1" dificuldadeAtual = do 
+    putStrLn "Iniciando o jogo..."
+    threadDelay 500000
+    start dificuldadeAtual
+    threadDelay 500000
+    menu "options" dificuldadeAtual
+
+menu "2" _ = do
+    novaDificuldade <- dificuldade
+    putStrLn $ "Dificuldade definida como: " ++ novaDificuldade
+    threadDelay 500000
+    menu "options" novaDificuldade
+
+menu "3" _ = quit
 
 main :: IO()
-main = menu "init"
+main = menu "options" "easy.json"
