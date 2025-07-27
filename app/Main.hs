@@ -39,18 +39,22 @@ inBounds :: ((Int, Int), (Int, Int)) -> (Int, Int) -> Bool
 inBounds ((minY, minX), (maxY, maxX)) (y, x) =
     x >= minX && x <= maxX && y >= minY && y <= maxY
 
+direcao :: Char -> (Int, Int)
+direcao 'w' = (-1, 0)
+direcao 'a' = (0, -1)
+direcao 's' = (1, 0)
+direcao 'd' = (0, 1)
+direcao _   = (0, 0)
+
 -- === Movimento do jogador ===
 move :: Char -> (Int, Int) -> A.Array (Int, Int) Tile -> (Int, Int)
 move tecla (y, x) gameMap =
-    let newPos = case tecla of
-                    'w' -> (y - 1, x)
-                    's' -> (y + 1, x)
-                    'a' -> (y, x - 1)
-                    'd' -> (y, x + 1)
-                    _   -> (y, x)
-    in if inBounds (A.bounds gameMap) newPos
+    let (dy, dx) = direcao tecla
+        newPos   = (y + dy, x + dx)
+    in if inBounds (A.bounds gameMap) newPos && gameMap A.! newPos /= Wall
        then newPos
        else (y, x)
+
 
 -- === Impressão do mapa ===
 printMap :: A.Array (Int, Int) Tile -> (Int, Int) -> IO ()
@@ -65,43 +69,44 @@ printMap gameMap playerPos = do
         ) [minY..maxY]
     putStrLn ""
 
+clearScreen :: IO ()
+clearScreen = putStr "\ESC[2J\ESC[H"
+
 -- === Leitura do mapa JSON ===
 loadMapFromJSON :: FilePath -> IO (A.Array (Int, Int) Tile)
 loadMapFromJSON path = do
     content <- B.readFile path
-    case decode content :: Maybe MapWrapper of
+    case decode content of
         Just (MapWrapper rows) -> do
             let tileLists = map (map charToTile) rows
                 numRows = length tileLists
-                numCols = if numRows > 0 then length (head tileLists) else 0
+                numCols = length (head tileLists)
                 assocs = [ ((y, x), tileLists !! y !! x) | y <- [0..numRows - 1], x <- [0..numCols - 1] ]
             return $ A.array ((0, 0), (numRows - 1, numCols - 1)) assocs
         Nothing -> do
             putStrLn "Falha ao decodificar o JSON! Verifique o formato."
-            putStrLn $ "Conteúdo bruto lido (debug):\n" ++ show content
+            putStrLn $ "Conteúdo bruto lido:\n" ++ show content
             exitFailure
 
 
 -- === Loop do jogo ===
 gameLoop :: A.Array (Int, Int) Tile -> (Int, Int) -> IO ()
 gameLoop gameMap currentPlayerPos = do
+    clearScreen
     putStrLn "=== SOKOBAN ==="
     printMap gameMap currentPlayerPos
     putStrLn $ "Posição: " ++ show currentPlayerPos
     putStrLn "Use w/a/s/d para mover, q para sair"
 
     tecla <- getChar
-    putStrLn ""
+    _ <- getChar -- Consumir o '\n'
 
     if tecla == 'q'
         then putStrLn "Fim do jogo!"
-        else do
+        else
             let newPos = move tecla currentPlayerPos gameMap
-            if newPos == currentPlayerPos && tecla `elem` "wasd"
-                then do
-                    putStrLn "Movimento inválido!"
-                    gameLoop gameMap currentPlayerPos
-                else gameLoop gameMap newPos
+            in gameLoop gameMap newPos
+
 
 -- === Início do jogo ===
 start :: IO ()
