@@ -22,7 +22,7 @@ move isPlayer tecla (y, x) gameMap =
     in if inBounds (A.bounds gameMap) newPos && gameMap A.! newPos /= Wall
        then if gameMap A.! newPos == Box && isPlayer
             then let (_, boxNewPos) = move False tecla newPos gameMap  -- move a caixa recursivamente, primeira posição é irrelevante aí pq a primeira representa uma caixa que teria sido afetada pelo movimento,como caixa não empurra caixa então o valor é sempre (-1,-1)
-                 in if boxNewPos /= newPos  -- se caixa se moveu
+                 in if boxNewPos /= newPos && gameMap A.! boxNewPos /= Box -- se caixa se moveu
                     then (boxNewPos, newPos)  -- caixa -> boxNewPos e jogador -> newPos
                     else ((-1, -1), (y, x))  -- tinha alguma coisa na frete da caixa
             else ((-1, -1), newPos)  -- só jogador se mexe
