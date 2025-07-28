@@ -37,9 +37,9 @@ gameLoop gameMap currentPlayerPos pushedBoxPos = do
 
 
 -- === Início do jogo ===
-start :: String -> IO ()
-start dificuldadeAtual = do
+start :: String -> Int -> IO ()
+start dificuldadeAtual level = do
     cwd <- getCurrentDirectory
     let jsonPath = cwd </> "data/maps/" ++ dificuldadeAtual
-    gameMap <- loadMapFromJSON jsonPath
+    gameMap <- loadMapFromJSON jsonPath level
     gameLoop gameMap (4, 4) (-1, -1)  -- (-1,-1) necessário por causa da auteração no gameLoop
