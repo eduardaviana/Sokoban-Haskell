@@ -1,7 +1,6 @@
 {-# LANGUAGE DeriveGeneric #-}
 
 module Game.SokobanMap ( 
-    inBounds,
     loadMapFromJSON
 ) where
 
@@ -35,10 +34,6 @@ instance Ae.FromJSON LevelLocal where
 instance Ae.FromJSON MapWrapperLocal where
   parseJSON = Ae.genericParseJSON defaultOptions
     { Ae.fieldLabelModifier = dropSuffix "Local" }
-
-inBounds :: ((Int, Int), (Int, Int)) -> (Int, Int) -> Bool
-inBounds ((minY, minX), (maxY, maxX)) (y, x) =
-    x >= minX && x <= maxX && y >= minY && y <= maxY
 
 loadMapFromJSON :: FilePath -> Int -> IO (A.Array (Int, Int) Tile)
 loadMapFromJSON path index = do

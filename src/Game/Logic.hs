@@ -1,7 +1,6 @@
 module Game.Logic (
     direcao,
-    move,
-    printMap
+    move
 ) where
 
 import qualified Data.Array as A
@@ -28,15 +27,9 @@ move isPlayer tecla (y, x) gameMap =
             else ((-1, -1), newPos)  -- só jogador se mexe
        else ((-1, -1), (y, x))  -- movimento invalido
 
-printMap :: A.Array (Int, Int) Tile -> (Int, Int) -> IO ()
-printMap gameMap playerPos = do
-    let ((minY, minX), (maxY, maxX)) = A.bounds gameMap
-    mapM_ (\y -> do
-        mapM_ (\x -> do
-            let tile = if (y, x) == playerPos then Player else gameMap A.! (y, x)
-            putChar (tileToChar tile)
-            ) [minX..maxX]
-        putStrLn ""
-        ) [minY..maxY]
-    putStrLn ""
+inBounds :: ((Int, Int), (Int, Int)) -> (Int, Int) -> Bool
+inBounds ((minY, minX), (maxY, maxX)) (y, x) =
+    x >= minX && x <= maxX && y >= minY && y <= maxY
+
+
 

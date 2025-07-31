@@ -91,5 +91,7 @@ menu "3" dificuldadeAtual _ = do
 
 menu "4" _ _ = quit
 
+menu _ dificuldadeAtual levelAtual = menu "options" dificuldadeAtual levelAtual 
+
 main :: IO()
 main = menu "options" "easy.json" 0
