@@ -1,6 +1,7 @@
 module Game.Logic (
     direcao,
-    move
+    move,
+    checaVitoria
 ) where
 
 import qualified Data.Array as A
@@ -13,6 +14,16 @@ direcao 'a' = (0, -1)
 direcao 's' = (1, 0)
 direcao 'd' = (0, 1)
 direcao _   = (0, 0)
+
+checaVitoria :: A.Array (Int, Int) Tile -> [(Int, Int)] -> Bool -> Bool
+checaVitoria gameMap [] filledMark = filledMark
+checaVitoria gameMap (x:xs) filledMark 
+    | not filledMark = False
+    | not markN = False
+    | otherwise = checaVitoria gameMap xs True
+    where markN = gameMap A.! x == Box
+    
+
 
 move :: Bool -> Char -> (Int, Int) -> A.Array (Int, Int) Tile -> ((Int, Int), (Int, Int))
 move isPlayer tecla (y, x) gameMap =
