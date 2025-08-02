@@ -1,4 +1,5 @@
 module Game.Logic (
+    proximaDificuldade,
     direcao,
     move,
     checaVitoria
@@ -15,16 +16,19 @@ direcao 's' = (1, 0)
 direcao 'd' = (0, 1)
 direcao _   = (0, 0)
 
-checaVitoria :: A.Array (Int, Int) Tile -> [(Int, Int)] -> Bool -> Bool
-checaVitoria gameMap [] filledMark = filledMark
-checaVitoria gameMap (x:xs) filledMark 
-    | not filledMark = False
+proximaDificuldade :: String -> String
+proximaDificuldade "easy.json" = "medium.json"
+proximaDificuldade "medium.json" = "hard.json"
+proximaDificuldade "hard.json" = "hard.json"
+proximaDificuldade _ = "easy.json"
+
+checaVitoria :: A.Array (Int, Int) Tile -> [(Int, Int)] -> Bool
+checaVitoria gameMap [] = True
+checaVitoria gameMap (x:xs)
     | not markN = False
-    | otherwise = checaVitoria gameMap xs True
+    | otherwise = checaVitoria gameMap xs
     where markN = gameMap A.! x == Box
     
-
-
 move :: Bool -> Char -> (Int, Int) -> A.Array (Int, Int) Tile -> ((Int, Int), (Int, Int))
 move isPlayer tecla (y, x) gameMap =
     let (dy, dx) = direcao tecla

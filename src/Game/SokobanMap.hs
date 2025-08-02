@@ -15,7 +15,8 @@ import Data.List (isSuffixOf)
 import Game.Types 
 
 data LevelLocal = LevelLocal
-  { tileMapLocal :: [String]
+  { tileMapLocal :: [String],
+    marksLocal :: [[Int]]
   } deriving (Show, Generic)
 
 data MapWrapperLocal = MapWrapperLocal
@@ -35,7 +36,7 @@ instance Ae.FromJSON MapWrapperLocal where
   parseJSON = Ae.genericParseJSON defaultOptions
     { Ae.fieldLabelModifier = dropSuffix "Local" }
 
-loadMapFromJSON :: FilePath -> Int -> IO (A.Array (Int, Int) Tile)
+loadMapFromJSON :: FilePath -> Int -> IO (A.Array (Int, Int) Tile, [(Int, Int)])
 loadMapFromJSON path index = do
     putStrLn $ "Tentando carregar mapa do arquivo " ++ path ++ ", nível " ++ show index
     content <- B.readFile path
@@ -45,12 +46,14 @@ loadMapFromJSON path index = do
                 putStrLn $ "Índice inválido: " ++ show index
                 exitFailure
             else do
-                let rows = tileMapLocal (lvls !! index)
+                let levelData = lvls !! index
+                    rows = tileMapLocal levelData
+                    marks = map (\[y, x] -> (y, x)) (marksLocal levelData)
                     tileLists = map (map charToTile) rows
                     numRows = length tileLists
                     numCols = length (head tileLists)
                     assocs = [ ((y, x), tileLists !! y !! x) | y <- [0..numRows - 1], x <- [0..numCols - 1] ]
-                return $ A.array ((0, 0), (numRows - 1, numCols - 1)) assocs
+                return (A.array ((0, 0), (numRows - 1, numCols - 1)) assocs, marks)
         Nothing -> do
             putStrLn "Falha ao decodificar o JSON! Verifique o formato."
             putStrLn $ "Conteúdo bruto lido:\n" ++ show content

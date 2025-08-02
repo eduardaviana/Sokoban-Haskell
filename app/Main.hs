@@ -3,6 +3,7 @@ module Main where
 import Game.GameLoop (start)
 import Game.IO
 import Control.Concurrent (threadDelay)
+import System.FilePath (takeBaseName)
 
 mostrarMenu :: IO()
 mostrarMenu = do
@@ -79,7 +80,7 @@ menu "1" dificuldadeAtual levelAtual = do
 
 menu "2" _ levelAtual = do
     novaDificuldade <- dificuldade
-    putStrLn $ "Dificuldade definida como: " ++ novaDificuldade
+    putStrLn $ "Dificuldade definida como: " ++ takeBaseName novaDificuldade
     threadDelay 500000
     menu "options" novaDificuldade levelAtual
 
