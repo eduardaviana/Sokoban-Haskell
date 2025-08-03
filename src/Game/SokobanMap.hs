@@ -36,7 +36,7 @@ instance Ae.FromJSON MapWrapperLocal where
   parseJSON = Ae.genericParseJSON defaultOptions
     { Ae.fieldLabelModifier = dropSuffix "Local" }
 
-loadMapFromJSON :: FilePath -> Int -> IO (A.Array (Int, Int) Tile, [(Int, Int)])
+loadMapFromJSON :: FilePath -> Int -> IO (A.Array (Int, Int) Tile, (Int, Int), [(Int, Int)])
 loadMapFromJSON path index = do
     putStrLn $ "Tentando carregar mapa do arquivo " ++ path ++ ", nível " ++ show index
     content <- B.readFile path
@@ -49,11 +49,25 @@ loadMapFromJSON path index = do
                 let levelData = lvls !! index
                     rows = tileMapLocal levelData
                     marks = map (\[y, x] -> (y, x)) (marksLocal levelData)
-                    tileLists = map (map charToTile) rows
-                    numRows = length tileLists
-                    numCols = length (head tileLists)
-                    assocs = [ ((y, x), tileLists !! y !! x) | y <- [0..numRows - 1], x <- [0..numCols - 1] ]
-                return (A.array ((0, 0), (numRows - 1, numCols - 1)) assocs, marks)
+                
+                -- Encontrar a posição do jogador e construir o novo mapa sem o jogador
+                let (playerPos, mapList) = foldl
+                        (\(accPos, accMap) (y, row) ->
+                            let (posInRow, newRow) = foldl
+                                    (\(p, r) (x, char) ->
+                                        if char == '@'
+                                            then ((y, x), r ++ [charToTile ' ']) -- Salva a posição e coloca um Floor
+                                            else (p, r ++ [charToTile char])
+                                    ) (accPos, []) (zip [0..] row)
+                            in (posInRow, accMap ++ [newRow])
+                        ) ((-1, -1), []) (zip [0..] rows)
+
+                let numRows = length mapList
+                    numCols = length (head mapList)
+                    assocs = [ ((y, x), mapList !! y !! x) | y <- [0..numRows - 1], x <- [0..numCols - 1] ]
+                
+                return (A.array ((0, 0), (numRows - 1, numCols - 1)) assocs, playerPos, marks)
+        
         Nothing -> do
             putStrLn "Falha ao decodificar o JSON! Verifique o formato."
             putStrLn $ "Conteúdo bruto lido:\n" ++ show content
