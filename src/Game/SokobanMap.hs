@@ -50,13 +50,12 @@ loadMapFromJSON path index = do
                     rows = tileMapLocal levelData
                     marks = map (\[y, x] -> (y, x)) (marksLocal levelData)
                 
-                -- Encontrar a posição do jogador e construir o novo mapa sem o jogador
                 let (playerPos, mapList) = foldl
                         (\(accPos, accMap) (y, row) ->
                             let (posInRow, newRow) = foldl
                                     (\(p, r) (x, char) ->
                                         if char == '@'
-                                            then ((y, x), r ++ [charToTile ' ']) -- Salva a posição e coloca um Floor
+                                            then ((y, x), r ++ [charToTile ' '])
                                             else (p, r ++ [charToTile char])
                                     ) (accPos, []) (zip [0..] row)
                             in (posInRow, accMap ++ [newRow])
