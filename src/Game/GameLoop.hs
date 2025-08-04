@@ -15,16 +15,11 @@ import Game.Logic
 import Game.SokobanMap
 import Game.IO
 
--- === Loop do jogo ===
-gameLoop :: A.Array (Int, Int) Tile -> [(Int, Int)] -> (Int, Int) -> (Int, Int) -> String -> Int ->IO ()
-gameLoop gameMap markPos currentPlayerPos pushedBoxPos dificuldadeAtual level = do
+-- O loop principal do jogo agora recebe a lista de posições das marcas.
+gameLoop :: A.Array (Int, Int) Tile -> [(Int, Int)] -> (Int, Int) -> String -> Int ->IO ()
+gameLoop gameMap markPos currentPlayerPos dificuldadeAtual level = do
     
-    -- atualiza posição da caixa (se tiver sido empurrada)
-    let updatedMap = if pushedBoxPos /= (-1, -1)
-                        then gameMap A.// [(currentPlayerPos, Floor), (pushedBoxPos, Box)]
-                        else gameMap
-
-    if checaVitoria updatedMap markPos
+    if checaVitoria gameMap markPos
         then do
             putStrLn "Sucesso!"
             let proximoNivel = level + 1
@@ -39,21 +34,20 @@ gameLoop gameMap markPos currentPlayerPos pushedBoxPos dificuldadeAtual level = 
                     else do
                         putStrLn $ "Avançando para a dificuldade " ++ (takeBaseName (proximaDificuldade dificuldadeAtual))
                         threadDelay 2000000
-                        -- Carrega o próximo nível da nova dificuldade
                         (newGameMap, newPlayerPos, newMarks) <- loadMapFromJSON ("data/maps/" ++ (proximaDificuldade dificuldadeAtual)) 0
-                        gameLoop newGameMap newMarks newPlayerPos (-1, -1) (proximaDificuldade dificuldadeAtual) 0
+                        gameLoop newGameMap newMarks newPlayerPos (proximaDificuldade dificuldadeAtual) 0
             else do
                 putStrLn "Passando para o próximo nível..."
                 threadDelay 1000000
                 let proximoNivel = level + 1
-                -- Carrega o próximo nível da mesma dificuldade
                 (newGameMap, newPlayerPos, newMarks) <- loadMapFromJSON ("data/maps/" ++ dificuldadeAtual) proximoNivel
-                gameLoop newGameMap newMarks newPlayerPos (-1, -1) dificuldadeAtual proximoNivel
+                gameLoop newGameMap newMarks newPlayerPos dificuldadeAtual proximoNivel
         else do
             clearScreen
             putStrLn "=== SOKOBAN ==="
             putStrLn $ "Dificuldade: " ++ (takeBaseName dificuldadeAtual) ++ " | Nível: " ++ show (level + 1)
-            printMap updatedMap currentPlayerPos
+            
+            printMap gameMap currentPlayerPos markPos
             putStrLn $ "Posição: " ++ show currentPlayerPos
             putStrLn "Use w/a/s/d para mover, q para sair, r para reiniciar"
 
@@ -65,18 +59,42 @@ gameLoop gameMap markPos currentPlayerPos pushedBoxPos dificuldadeAtual level = 
                 then do
                     putStrLn "Reiniciando nível"
                     threadDelay 500000
-                    -- Reinicia o nível, lendo a posição inicial do jogador do JSON
                     (newGameMap, newPlayerPos, newMarks) <- loadMapFromJSON ("data/maps/" ++ dificuldadeAtual) level
-                    gameLoop newGameMap newMarks newPlayerPos (-1, -1) dificuldadeAtual level
+                    gameLoop newGameMap newMarks newPlayerPos dificuldadeAtual level
             else
-                let (boxNewPos, playerNewPos) = move True tecla currentPlayerPos updatedMap
-                in gameLoop updatedMap markPos playerNewPos boxNewPos dificuldadeAtual level
+                let (boxNewPos, playerNewPos) = move True tecla currentPlayerPos gameMap
+                in if playerNewPos /= currentPlayerPos
+                   then
+                       let oldPlayerPos = currentPlayerPos
+                           oldPlayerTile = gameMap A.! oldPlayerPos
+                           newPlayerTile = gameMap A.! playerNewPos
+
+                           isBoxPushed = newPlayerTile == Box
+
+
+                           tileAtOldPlayerPos = if oldPlayerPos `elem` markPos
+                                                then Mark
+                                                else Floor
+
+                           updatedMap = 
+                               if isBoxPushed
+                                   then 
+                                       let oldBoxPos = playerNewPos
+                                           tileAtOldBoxPos = if oldBoxPos `elem` markPos
+                                                             then Mark
+                                                             else Floor
+                                           newMap = gameMap A.// [(oldPlayerPos, tileAtOldPlayerPos), (oldBoxPos, tileAtOldBoxPos), (boxNewPos, Box)]
+                                       in newMap
+                                   else 
+                                       gameMap A.// [(oldPlayerPos, tileAtOldPlayerPos), (playerNewPos, Player)]
+                        in gameLoop updatedMap markPos playerNewPos dificuldadeAtual level
+                   else gameLoop gameMap markPos currentPlayerPos dificuldadeAtual level
+
 
 -- === Início do jogo ===
 start :: String -> Int -> IO ()
 start dificuldadeAtual level = do
     cwd <- getCurrentDirectory
     let jsonPath = cwd </> "data/maps/" ++ dificuldadeAtual
-    -- Lê a posição inicial do jogador diretamente do JSON
     (gameMap, playerPos, marks) <- loadMapFromJSON jsonPath level
-    gameLoop gameMap marks playerPos (-1, -1) dificuldadeAtual level
+    gameLoop gameMap marks playerPos dificuldadeAtual level
