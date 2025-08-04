@@ -18,16 +18,16 @@ data MapWrapper = MapWrapper { tileMap :: [String] } deriving (Show, Generic)
 instance FromJSON MapWrapper
 
 tileToChar :: Tile -> Char
-tileToChar Wall   = '█'
+tileToChar Wall   = '#'
 tileToChar Floor  = ' '
-tileToChar Box    = '≡'
+tileToChar Box    = 'B'
 tileToChar Player = '@'
 tileToChar Mark   = 'x'
 
 
 charToTile :: Char -> Tile
-charToTile '█' = Wall
+charToTile '#' = Wall
 charToTile ' ' = Floor
-charToTile '≡' = Box
+charToTile 'B' = Box
 charToTile '@' = Player
 charToTile 'x' = Mark

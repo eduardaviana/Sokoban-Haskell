@@ -29,16 +29,20 @@ printMap gameMap playerPos marks = do
             let tile = gameMap A.! currentPos
             
             if currentPos == playerPos
-                then 
-                    if currentPos `elem` marks 
-                    then putChar '@' 
-                    else putChar 'o' 
+                then putChar '𖠋' 
+            else if tile == Wall
+                then putChar '█' 
             else if tile == Box
                 then
                     if currentPos `elem` marks
-                    then putChar '*' 
+                    then putChar '≢' 
                     else putChar '≡' 
             else if tile == Floor
+                then
+                    if currentPos `elem` marks
+                    then putChar 'x' 
+                    else putChar ' ' 
+            else if tile == Wall
                 then
                     if currentPos `elem` marks
                     then putChar 'x' 
