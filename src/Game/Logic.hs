@@ -3,7 +3,7 @@ module Game.Logic where
 
 import qualified Data.Array as A
 import Game.Types
-import Game.SokobanMap
+import Game.SokobanMap ()
 
 -- | Função com casamento de padrão para os movimentos do jogador no mapa. Possui os parametros:
 -- | @param tecla Char: A tecla de direção pressionada
@@ -17,19 +17,19 @@ direcao _   = (0, 0)
 
 -- | Função com casamento de padrão para determinar a proxima dificuldade que o jogador deve ir
 -- | @param dificuldadeAtual String: O nome do arquivo da dificuldade atual
--- | @return String: O nome do arquivo da sua próxima dificuldade, se não reconhecer a dificuldade por padrao irá para a easy
+-- | @return String: O nome do arquivo da sua próxima dificuldade, se não reconhecer a dificuldade por padrao irá para a facil
 proximaDificuldade :: String -> String
-proximaDificuldade "easy.json" = "medium.json"
-proximaDificuldade "medium.json" = "hard.json"
-proximaDificuldade "hard.json" = "hard.json"
-proximaDificuldade _ = "easy.json"
+proximaDificuldade "facil.json" = "medio.json"
+proximaDificuldade "medio.json" = "dificil.json"
+proximaDificuldade "dificil.json" = "dificil.json"
+proximaDificuldade _ = "facil.json"
 
 -- | Função para verificar se o jogador venceu o nivel, recebe como paramentros:
 -- | @param gameMap A.Array (Int, Int) Tile: O mapa do jogo
 -- | @param markPos [(Int, Int)]: As coordenadas das Marks onde as caixas devem ser movidas
 -- | @return Bool: Retorna true se todas as caixas estiverem nas marcas corretas e false caso contrário
 checaVitoria :: A.Array (Int, Int) Tile -> [(Int, Int)] -> Bool
-checaVitoria gameMap [] = True
+checaVitoria _ [] = True
 checaVitoria gameMap (x:xs)
     | not markN = False
     | otherwise = checaVitoria gameMap xs
