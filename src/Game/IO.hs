@@ -12,10 +12,10 @@ clearScreen = putStr "\ESC[2J\ESC[H"
 
 -- | Função que valida se uma escolha de input é válida dentro de uma sequência de opções.
 -- | @param escolha String: A string digitada pelo usuário.
--- | @param seq String: Uma sequência de caracteres válidos 
+-- | @param s String: Uma sequência de caracteres válidos 
 -- | @return Bool: Retorna True se todos os caracteres da 'escolha' estiverem presentes na 'seq', e False caso contrário.
 tratarOpcao :: String -> String -> Bool
-tratarOpcao escolha seq = all (\c -> c `elem` seq) escolha
+tratarOpcao escolha s = all (\c -> c `elem` s) escolha
 
 -- | Função que lê um único caractere do teclado de forma instantânea, sem esperar por Enter.
 -- | @return IO Char: Uma ação de I/O que retorna o caractere lido.

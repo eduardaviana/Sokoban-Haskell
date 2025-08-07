@@ -40,9 +40,9 @@ dificuldade = do
 
     escolha <- getLine
     case escolha of
-        "1" -> return "easy.json"
-        "2" -> return "medium.json"
-        "3" -> return "hard.json"
+        "1" -> return "facil.json"
+        "2" -> return "medio.json"
+        "3" -> return "dificil.json"
         _   -> do
             putStrLn "Escolha inválida! Tente novamente."
             threadDelay 1000000
@@ -117,4 +117,4 @@ menu _ dificuldadeAtual levelAtual = menu "options" dificuldadeAtual levelAtual
 
 -- | Chamada para o menu principal onde o jogo inicia na dificuldade facil nivel 1
 main :: IO()
-main = menu "options" "easy.json" 0
+main = menu "options" "facil.json" 0

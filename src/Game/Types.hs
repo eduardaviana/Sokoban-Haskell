@@ -29,6 +29,7 @@ tileToChar Box    = 'B'
 tileToChar Player = '@'
 tileToChar Mark   = 'x'
 
+
 -- | Função que converte um 'Char' de volta para um valor do tipo 'Tile'.
 -- | @param char Char: O caractere a ser convertido.
 -- | @return Tile: O tile correspondente.
@@ -38,3 +39,4 @@ charToTile ' ' = Floor
 charToTile 'B' = Box
 charToTile '@' = Player
 charToTile 'x' = Mark
+charToTile _   = Floor
