@@ -1,7 +1,6 @@
 -- | Módulo principal do projeto responsável por gerenciar a navegação do menu inicial e iniciar a partida do jogo.
 module Main where
 
--- | importação de outros modulos para utilizar suas funções
 import Game.GameLoop (start)
 import Game.IO
 import Control.Concurrent (threadDelay)
