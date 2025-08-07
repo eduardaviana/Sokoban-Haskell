@@ -7,7 +7,7 @@ module Game.SokobanMap where
 import qualified Data.Array as A
 import qualified Data.ByteString.Lazy as B
 import qualified Data.Aeson as Ae
-import Data.Aeson.Types (defaultOptions)
+import Data.Aeson.Types ()
 import System.Exit (exitFailure)
 import GHC.Generics (Generic)
 import Game.Types (Tile(..), charToTile) 
@@ -45,12 +45,12 @@ loadMapFromJSON path index = do
     putStrLn $ "Tentando carregar mapa do arquivo " ++ path ++ ", nível " ++ show index
     content <- B.readFile path
     case Ae.decode content of
-        Just (MapWrapperLocal levels) -> 
-            if index < 0 || index >= length levels then do
+        Just (MapWrapperLocal lvls) -> 
+            if index < 0 || index >= length lvls then do
                 putStrLn $ "Índice inválido: " ++ show index
                 exitFailure
             else do
-                let levelData = levels !! index
+                let levelData = lvls !! index
                     rows = tileMap levelData 
                     markPositions = map (\[y, x] -> (y, x)) (marks levelData) 
                 
