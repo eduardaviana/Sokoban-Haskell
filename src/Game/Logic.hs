@@ -45,19 +45,14 @@ move :: Bool -> Char -> (Int, Int) -> A.Array (Int, Int) Tile -> ((Int, Int), (I
 move isPlayer tecla (y, x) gameMap =
     let (dy, dx) = direcao tecla
         newPos   = (y + dy, x + dx)
-    -- Verifica se a nova posição está dentro dos limites do mapa e se não é uma parede
     in if inBounds (A.bounds gameMap) newPos && gameMap A.! newPos /= Wall
-       then -- Se o Tile na nova posição for uma caixa E quem está tentando mover é o jogador:
+       then 
             if gameMap A.! newPos == Box && isPlayer
-                -- O jogador está tentando mover para uma caixa, então tentamos empurrá-la:
                 then let (_, boxNewPos) = move False tecla newPos gameMap
-                -- Verifica se a caixa mudou de posição E se a nova posição da caixa não é outra caixa
                      in if boxNewPos /= newPos && gameMap A.! boxNewPos /= Box
-                        then (boxNewPos, newPos)   -- Se a caixa pode ser empurrada: retorna (nova posição da caixa, nova posição do jogador) caixa -> boxNewPos e jogador -> newPos
-                        else ((-1, -1), (y, x))    -- Se a caixa não pode ser empurrada: jogador e caixa ficam na posição atual.
-            -- Se não está empurrando uma caixa (o jogador move para um chão/marca, ou uma caixa move para um chão/marca)
+                        then (boxNewPos, newPos)  
+                        else ((-1, -1), (y, x))    
             else ((-1, -1), newPos)
-    -- Se a nova posição está fora dos limites do mapa OU for uma parede os movimentos não mudam
        else ((-1, -1), (y, x))
 
 -- | Função que verifica os limites de um array, recebendo como parâmetros:
