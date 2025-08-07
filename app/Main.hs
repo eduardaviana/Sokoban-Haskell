@@ -1,117 +1,120 @@
-{-# LANGUAGE DeriveGeneric #-}
+-- | Módulo principal do projeto responsável por gerenciar a navegação do menu inicial e iniciar a partida do jogo.
+module Main where
 
-import qualified Data.Array as A
-import qualified Data.ByteString.Lazy as B
-import qualified Data.Aeson as Ae
-import Data.Aeson (FromJSON, decode)
-import GHC.Generics (Generic)
-import Prelude
-import System.Exit (exitFailure) -- Importar para sair do programa
-import System.Directory (getCurrentDirectory)
-import System.FilePath ((</>))
+-- | importação de outros modulos para utilizar suas funções
+import Game.GameLoop (start)
+import Game.IO
+import Control.Concurrent (threadDelay)
+import System.FilePath (takeBaseName)
 
--- === Tipos ===
-data Tile = Wall | Floor | Box | Player | Mark deriving (Show, Eq)
+-- | Função para exibir o menu principal do jogo
+mostrarMenu :: IO()
+mostrarMenu = do
+    putStrLn "███████  ██████  ██   ██  ██████  ██████   █████  ███    ██"
+    putStrLn "██      ██    ██ ██  ██  ██    ██ ██   ██ ██   ██ ████   ██"
+    putStrLn "███████ ██    ██ █████   ██    ██ ██████  ███████ ██ ██  ██"
+    putStrLn "     ██ ██    ██ ██  ██  ██    ██ ██   ██ ██   ██ ██  ██ ██"
+    putStrLn "███████  ██████  ██   ██  ██████  ██████  ██   ██ ██   ████"
+    putStrLn ""                                               
+    putStrLn "Bem-vindo ao Sokoban em Haskell!"
+    putStrLn " ------------------------------"
+    putStrLn "| 1.      Entrar no Jogo       |"
+    putStrLn "| 2.  Selecionar Dificuldade   |"
+    putStrLn "| 3.      Selecionar Level     |"
+    putStrLn "| 4.          Sair             |"
+    putStrLn " ------------------------------"
+    putStrLn "" 
 
-data MapWrapper = MapWrapper { tileMap :: [String] }
-    deriving (Show, Generic)
-
-instance FromJSON MapWrapper
-
--- === Conversão entre Tile e Char ===
-tileToChar :: Tile -> Char
-tileToChar Wall   = '#'
-tileToChar Floor  = ' '
-tileToChar Box    = 'B'
-tileToChar Player = '@'
-tileToChar Mark   = 'X'
-
-charToTile :: Char -> Tile
-charToTile '#' = Wall
-charToTile ' ' = Floor
-charToTile 'B' = Box
-charToTile '@' = Player
-charToTile 'X' = Mark
-charToTile _   = Floor
-
--- === Verificação de limites ===
-inBounds :: ((Int, Int), (Int, Int)) -> (Int, Int) -> Bool
-inBounds ((minY, minX), (maxY, maxX)) (y, x) =
-    x >= minX && x <= maxX && y >= minY && y <= maxY
-
--- === Movimento do jogador ===
-move :: Char -> (Int, Int) -> A.Array (Int, Int) Tile -> (Int, Int)
-move tecla (y, x) gameMap =
-    let newPos = case tecla of
-                    'w' -> (y - 1, x)
-                    's' -> (y + 1, x)
-                    'a' -> (y, x - 1)
-                    'd' -> (y, x + 1)
-                    _   -> (y, x)
-    in if inBounds (A.bounds gameMap) newPos
-       then newPos
-       else (y, x)
-
--- === Impressão do mapa ===
-printMap :: A.Array (Int, Int) Tile -> (Int, Int) -> IO ()
-printMap gameMap playerPos = do
-    let ((minY, minX), (maxY, maxX)) = A.bounds gameMap
-    mapM_ (\y -> do
-        mapM_ (\x -> do
-            let tile = if (y, x) == playerPos then Player else gameMap A.! (y, x)
-            putChar (tileToChar tile)
-            ) [minX..maxX]
-        putStrLn ""
-        ) [minY..maxY]
+-- | Função de menu para escolha de dificuldade
+-- | @return Uma String contendo o nome do arquivo JSON da dificuldade selecionada.
+dificuldade :: IO String
+dificuldade = do
+    clearScreen
+    putStrLn "Selecione a dificuldade:"
+    putStrLn " ---------------------"
+    putStrLn "| 1.  Fácil           |"
+    putStrLn "| 2.  Médio           |"
+    putStrLn "| 3.  Difícil         |"
+    putStrLn " ---------------------"
     putStrLn ""
 
--- === Leitura do mapa JSON ===
-loadMapFromJSON :: FilePath -> IO (A.Array (Int, Int) Tile)
-loadMapFromJSON path = do
-    content <- B.readFile path
-    case decode content :: Maybe MapWrapper of
-        Just (MapWrapper rows) -> do
-            let tileLists = map (map charToTile) rows
-                numRows = length tileLists
-                numCols = if numRows > 0 then length (head tileLists) else 0
-                assocs = [ ((y, x), tileLists !! y !! x) | y <- [0..numRows - 1], x <- [0..numCols - 1] ]
-            return $ A.array ((0, 0), (numRows - 1, numCols - 1)) assocs
-        Nothing -> do
-            putStrLn "Falha ao decodificar o JSON! Verifique o formato."
-            putStrLn $ "Conteúdo bruto lido (debug):\n" ++ show content
-            exitFailure
+    escolha <- getLine
+    case escolha of
+        "1" -> return "facil.json"
+        "2" -> return "medio.json"
+        "3" -> return "dificil.json"
+        _   -> do
+            putStrLn "Escolha inválida! Tente novamente."
+            threadDelay 1000000
+            dificuldade
 
+-- | Função de menu para escolha de dificuldade
+-- | @return Um Int que representa o índice do level selecionado.
+level :: IO Int
+level = do
+    clearScreen
+    putStrLn "Selecione o level de 1 a 5:"
 
--- === Loop do jogo ===
-gameLoop :: A.Array (Int, Int) Tile -> (Int, Int) -> IO ()
-gameLoop gameMap currentPlayerPos = do
-    putStrLn "=== SOKOBAN ==="
-    printMap gameMap currentPlayerPos
-    putStrLn $ "Posição: " ++ show currentPlayerPos
-    putStrLn "Use w/a/s/d para mover, q para sair"
+    escolha <- getLine
+    case escolha of
+        "1" -> return 0
+        "2" -> return 1
+        "3" -> return 2
+        "4" -> return 3
+        "5" -> return 4 
+        _ -> do
+            putStrLn "Escolha inválida! Tente novamente."
+            threadDelay 1000000
+            level
 
-    tecla <- getChar
-    putStrLn ""
+-- | Função para imprimir mensagem de saída do jogo
+quit :: IO()
+quit = putStrLn "OBRIGADO POR JOGAR! :)"
 
-    if tecla == 'q'
-        then putStrLn "Fim do jogo!"
+-- | Função do menu principal para manipular as escolhas do jogador
+-- | @param estadoAtual String: A string que representa o estado atual do menu.
+-- | @param dificuldadeAtual String: A string do nome do arquivo da dificuldade atual.
+-- | @param levelAtual Int: O índice do level selecionado.
+menu :: String -> String -> Int -> IO()
+menu "options" dificuldadeAtual levelAtual = do
+    clearScreen
+    mostrarMenu
+    escolha <- getLine
+    if tratarOpcao escolha "1234"
+        then menu escolha dificuldadeAtual levelAtual
         else do
-            let newPos = move tecla currentPlayerPos gameMap
-            if newPos == currentPlayerPos && tecla `elem` "wasd"
-                then do
-                    putStrLn "Movimento inválido!"
-                    gameLoop gameMap currentPlayerPos
-                else gameLoop gameMap newPos
+            putStrLn "Escolha inválida! Digite uma opção válida!"
+            threadDelay 600000
+            menu "options" dificuldadeAtual levelAtual
 
--- === Início do jogo ===
-start :: IO ()
-start = do
-    cwd <- getCurrentDirectory
-    let jsonPath = cwd </> "data/maps/easy.json"
-    gameMap <- loadMapFromJSON jsonPath
-    gameLoop gameMap (4, 4)
+-- | Entra diretamente no jogo chamando a função start 
+menu "1" dificuldadeAtual levelAtual = do 
+    putStrLn "Iniciando o jogo..."
+    threadDelay 500000
+    start dificuldadeAtual levelAtual
+    threadDelay 500000
+    menu "options" dificuldadeAtual levelAtual
 
--- === Main ===
-main :: IO ()
-main = start
+-- | Se o jogador quiser selecionar a dificuldade é chamada a função de dificuldade
+menu "2" _ levelAtual = do
+    novaDificuldade <- dificuldade
+    putStrLn $ "Dificuldade definida como: " ++ takeBaseName novaDificuldade
+    threadDelay 500000
+    menu "options" novaDificuldade levelAtual
 
+-- | Se o jogador quiser selecionar o level é chamada a função level 
+menu "3" dificuldadeAtual _ = do
+    novoLevel <- level
+    putStrLn $ "Level selecionado: " ++ show (novoLevel + 1)
+    threadDelay 500000
+    menu "options" dificuldadeAtual novoLevel
+
+-- | Se o jogador quiser sair é selecionada a função quit
+menu "4" _ _ = quit
+
+-- | O menu deve ficar aparecendo até que uma das opções acima seja escolhida
+menu _ dificuldadeAtual levelAtual = menu "options" dificuldadeAtual levelAtual 
+
+-- | Chamada para o menu principal onde o jogo inicia na dificuldade facil nivel 1
+main :: IO()
+main = menu "options" "facil.json" 0
