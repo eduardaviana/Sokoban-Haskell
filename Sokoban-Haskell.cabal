@@ -1,4 +1,4 @@
-cabal-version:       2.2
+cabal-version:       2.4
 name:                Sokoban-Haskell
 version:             0.1.0.0
 license:             BSD-3-Clause
@@ -11,16 +11,37 @@ extra-doc-files:     CHANGELOG.md
 common warnings
   ghc-options:       -Wall
 
+library
+  exposed-modules:   Game.Types
+                   , Game.SokobanMap
+                   , Game.Logic
+                   , Game.GameLoop
+                   , Game.IO
+  hs-source-dirs:    src
+  default-language:  Haskell2010
+  build-depends:     base >= 4.17 && < 4.19
+                   , array
+                   , bytestring
+                   , aeson
+                   , filepath
+                   , directory
+
 executable Sokoban-Haskell
   import:            warnings
   main-is:           Main.hs
   hs-source-dirs:    app
+                   , src
   default-language:  Haskell2010
-  build-depends:
-      base ^>= 4.17.2.0,
-      aeson,
-      bytestring,
-      array,
-      directory,
-      filepath
+  build-depends:     base >= 4.17 && < 4.19
+                   , array
+                   , bytestring
+                   , aeson
+                   , filepath
+                   , directory
+                   , Sokoban-Haskell
+  other-modules:     Game.GameLoop
+                   , Game.IO
+                   , Game.Logic
+                   , Game.SokobanMap
+                   , Game.Types
 
