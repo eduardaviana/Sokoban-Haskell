@@ -20,6 +20,11 @@ cabal 2.4
 ```
 3. Instalar Dependências e Compilar
 
+Se você não for usuario de linux ou não tiver a wsl instalda em sua máquina precisara fazer uma modificação dentro do IO.hs tirando os caracteres especiais (não compilados em windows) e colocando os que estão comentados. 
+```
+Troque 𖠋 por P, '≢' troque por =, '≡' troque por #. 
+```
+
 Na raiz do seu projeto, execute os comandos:
 ```
 cabal update
