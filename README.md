@@ -38,18 +38,26 @@ Após a compilação bem-sucedida, você pode iniciar o jogo, execute o comando:
 ```
 cabal run
 ```
-## Estrutura do Repositorio
+## Estrutura do Projeto
+O projeto foi refatorado para seguir uma arquitetura limpa, com cada módulo tendo uma única e clara responsabilidade.
 
-O projeto é organizado modularmente para separar as responsabilidades e facilitar a manutenção, seguindo a seguinte estrutura:
+* `app/Main.hs`: Ponto de entrada da aplicação. Gerencia apenas o menu inicial, delegando a execução do jogo para o Controller, GameLoop. É um módulo "porteiro", desacoplado da lógica do jogo.
 
-* `app/Main.hs`: Ponto de entrada da aplicação, responsável por iniciar o menu principal do jogo.
 * `data/maps/`: Contém os arquivos **JSON** dos mapas de jogo.
+
 * `src/Game/`: Contém os módulos da biblioteca do projeto, onde a lógica central do jogo é desenvolvida.
-    * `GameLoop.hs`: Gerencia o loop principal do jogo, incluindo a seleção de fase e o processamento de comandos do usuário;
-    * `IO.hs`: Contém funções relacionadas a operações de entrada e saída, como leitura de caracteres únicos do terminal e limpeza de tela;
-    * `Logic.hs`: Contém a lógica central do jogo;
-    * `SokobanMap.hs`: Lida com a estrutura do mapa, verificação de limites e o carregamento de mapas via JSON;
-    * `Types.hs`: Definições de tipos de dados fundamentais e funções básicas de conversão.
+    * `Types.hs`: Define todas as estruturas de dados centrais do projeto, como GameState, GameConfig, Action, Direction e Tile. É a fundação do nosso modelo de dados.
+
+    * `Engine.hs`: O cérebro do jogo. Contém a lógica de regras pura e sem efeitos colaterais (I/O). Sua função principal, update, recebe um estado e uma ação e retorna o novo estado. É o "motor" testável que define como o mundo do jogo evolui.
+
+    * `View.hs`: A camada de apresentação. Sua única tarefa é receber o estado do jogo (GameState) e desenhá-lo no terminal, com todos os painéis e formatação. Não contém nenhuma lógica de regras.
+
+    * `GameLoop.hs`: O maestro da aplicação. Gerencia o fluxo e o loop do jogo, orquestrando os outros módulos: captura o input do usuário, envia ações para o Engine e passa o novo estado para a View renderizar.
+
+    * `MapLoader`: Responsável por carregar e decodificar os arquivos de mapa .json, transformando-os nos tipos de dados que o jogo entende.
+
+    * `Utils`: Módulo opcional para funções utilitárias genéricas (ex: capitalize, getCharInstant) que podem ser reutilizadas em diferentes partes do projeto.
+
 * `test/`: 
 * `Sokoban-Haskell.cabal`: Arquivo de configuração principal do projeto Cabal, que gerencia as dependências e o processo de build.
 
