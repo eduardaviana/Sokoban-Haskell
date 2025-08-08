@@ -16,7 +16,7 @@ data Tile = Wall | Floor | Box | Player | Mark deriving (Show, Eq)
 
 -- | Representa as direções de movimento possíveis para o jogador.
 -- | O 'deriving (Eq, Show)' permite que valores deste tipo sejam comparados e exibidos como String.
-data Direction = Up | Down | Left | Right deriving (Eq, Show)
+data Direction = Up | Down | GoLeft | GoRight deriving (Eq, Show)
 
 -- | Representa as ações que o jogador pode realizar durante o jogo.
 -- | Este tipo de dado melhora a segurança e clareza do código em comparação com o uso de 'Char'.
@@ -25,15 +25,16 @@ data Action = Move Direction | Restart | Quit | NoOp deriving (Eq, Show)
 -- | Define a configuração de um nível. Contém dados que NÃO mudam durante uma partida.
 -- | Agrupar estes dados em um record simplifica a passagem de parâmetros entre funções.
 data GameConfig = GameConfig
-  { gcDifficulty :: String
-  , gcLevel      :: Int
-  , gcMarkPos    :: [(Int, Int)]
+  { gcDifficulty :: String, 
+    gcLevel      :: Int, 
+    gcMarkPos    :: [(Int, Int)]
   } deriving (Show)
 
 -- | Define o estado do jogo. Contém dados que MUDAM a cada movimento do jogador.
 data GameState = GameState
-  { gsMap       :: A.Array (Int, Int) Tile
-  , gsPlayerPos :: (Int, Int)
+  { gsMap       :: A.Array (Int, Int) Tile, 
+    gsPlayerPos :: (Int, Int), 
+    gsMoveCount   :: Int
   } deriving (Show)
 
 -- | Tipo de dado auxiliar para a decodificação de um único nível do arquivo JSON.
