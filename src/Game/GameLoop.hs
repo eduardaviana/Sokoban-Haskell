@@ -40,13 +40,14 @@ start difficulty level = do
 -- | @param state GameState: O estado atual do jogo.
 -- | @return IO (): Uma ação de I/O que continua o jogo.
 gameLoop :: GameConfig -> GameState -> IO ()
-gameLoop config state
-    | isVictory config state = handleVictory config
-    | otherwise = do
-        render config state
-        input <- getCharInstant
-        let action = parseAction input
-        handleAction action config state
+gameLoop config state = do
+    render config state
+    if isVictory config state
+        then handleVictory config
+        else do
+            input <- getCharInstant
+            let action = parseAction input
+            handleAction action config state
 
 
 -- | Processa a ação do jogador, decidindo o que fazer a seguir.
