@@ -12,6 +12,7 @@ import System.FilePath ((</>))
 import System.Directory (getCurrentDirectory)
 import Game.Types
 
+
 -- | Converte as strings do mapa em um Array e encontra a posição do jogador.
 -- | @param rows [String]: As linhas do mapa lidas do arquivo.
 -- | @return ((Int, Int), A.Array (Int, Int) Tile): Uma tupla contendo a posição inicial do jogador e o mapa do jogo como um Array.
@@ -36,6 +37,7 @@ parseMap rows =
         assocs  = [ ((y, x), mapList !! y !! x) | y <- [0..numRows - 1], x <- [0..numCols - 1] ]
     in
         (playerPos, A.array bounds assocs)
+
 
 -- | Função que carrega o mapa a partir de um arquivo JSON.
 -- | @param difficultyName String: O nome do arquivo da dificuldade (ex: "facil.json").
