@@ -49,6 +49,7 @@ render config state = do
     putStrLn $ "║" ++ padCenter (panelWidth - 2) ajuda ++ "║"
     drawBottomBorder panelWidth
 
+
 -- | Imprime o mapa do jogo dentro de uma caixa com bordas.
 -- | @param panelWidth Int: A largura total do painel para garantir o alinhamento.
 -- | @param config GameConfig: A configuração do nível.
