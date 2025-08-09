@@ -65,9 +65,13 @@ handleAction action config state =
             start (gcDifficulty config) (gcLevel config)
         NoOp ->
             gameLoop config state
+        Undo ->
+            case gsHistory state of
+                (lastState:_) -> gameLoop config lastState
+                [] -> gameLoop config state
         moveAction@(Move _) ->
             let newState = update moveAction config state
-            in gameLoop config newState
+            in gameLoop config newState { gsHistory = state : gsHistory newState }
 
 
 -- | Lida com a lógica de transição após o jogador vencer um nível.
@@ -100,12 +104,13 @@ handleVictory config = do
 -- | Mapeia caracteres de input para Ações do jogo.
 actionMap :: Map.Map Char Action
 actionMap = Map.fromList
-    [ ('w', Move Up), ('W', Move Up)
-    , ('a', Move GoLeft), ('A', Move GoLeft)
-    , ('s', Move Down), ('S', Move Down)
-    , ('d', Move GoRight), ('D', Move GoRight)
-    , ('q', Quit), ('Q', Quit)
-    , ('r', Restart), ('R', Restart)
+    [ ('w', Move Up), ('W', Move Up), 
+		  ('a', Move GoLeft), ('A', Move GoLeft),
+		  ('s', Move Down), ('S', Move Down), 
+			('d', Move GoRight), ('D', Move GoRight), 
+			('q', Quit), ('Q', Quit), 
+			('r', Restart), ('R', Restart), 
+			('u', Undo), ('U', Undo)
     ]
     
 
