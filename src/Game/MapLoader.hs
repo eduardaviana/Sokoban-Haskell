@@ -19,7 +19,6 @@ import Game.Types
 parseMap :: [String] -> ((Int, Int), A.Array (Int, Int) Tile)
 parseMap rows =
     let
-        -- Encontra a posição do jogador e substitui o caractere '@' por um espaço
         (playerPos, mapList) = foldl
             (\(pPos, accMap) (y, row) ->
                 let (posInRow, newRow) = foldl
