@@ -1,40 +1,46 @@
-cabal-version:      2.4
-name:               Sokoban-Haskell
-version:            0.1.0.0
-license:            BSD-3-Clause
-license-file:       LICENSE
-author:             Jota
-maintainer:         jamqueiroz2005@gmail.com
-build-type:         Simple
-extra-doc-files:    CHANGELOG.md
+cabal-version:       2.4
+name:                Sokoban-Haskell
+version:             0.1.0.0
+license:             BSD-3-Clause
+license-file:        LICENSE
+author:              Jota
+maintainer:          jamqueiroz2005@gmail.com
+build-type:          Simple
+extra-doc-files:     CHANGELOG.md
 
 common warnings
-  ghc-options:      -Wall
+  ghc-options:       -Wall
 
 library
-  exposed-modules:  Game.Types
-                  , Game.MapLoader
-                  , Game.Engine
-                  , Game.View
-                  , Game.GameLoop
-                  , Game.Utils
+  exposed-modules:   Game.Types
+                   , Game.MapLoader
+                   , Game.Engine
+                   , Game.View
+                   , Game.GameLoop
+                   , Game.Utils
 
-  hs-source-dirs:   src
-  default-language: Haskell2010
-  build-depends:    base >= 4.17 && < 4.19
-                  , array
-                  , bytestring
-                  , aeson
-                  , filepath
-                  , directory
-                  , containers
+  hs-source-dirs:    src
+  default-language:  Haskell2010
+  build-depends:     base >= 4.17 && < 4.19
+                   , array
+                   , bytestring
+                   , aeson
+                   , filepath
+                   , directory
+                   , containers
+                   , ansi-terminal >= 0.11
 
 executable Sokoban-Haskell
-  import:           warnings
-  main-is:          Main.hs
-  hs-source-dirs:   app
-  default-language: Haskell2010
-  build-depends:    base >= 4.17 && < 4.19
-                  , Sokoban-Haskell
-                  , containers
-                  , filepath 
+  import:            warnings
+  main-is:           Main.hs
+  hs-source-dirs:    app
+  default-language:  Haskell2010
+  build-depends:     base >= 4.17 && < 4.19
+                   , Sokoban-Haskell
+                   , array
+                   , bytestring
+                   , aeson
+                   , filepath
+                   , directory
+                   , containers
+                   , ansi-terminal >= 0.11
