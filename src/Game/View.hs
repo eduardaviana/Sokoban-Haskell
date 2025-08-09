@@ -27,7 +27,7 @@ render config state = do
         statusMovimentos = "Movimentos: " ++ show (gsMoveCount state)
         statusLinha2 = statusCaixas ++ " | " ++ statusMovimentos
 
-        ajuda = "[W/A/S/D] Mover | [R] Reiniciar | [Q] Sair"
+        ajuda = "[W/A/S/D] Mover | [U] Desfazer | [R] Reiniciar | [Q] Sair"
 
     let ((_, minX), (_, maxX)) = A.bounds (gsMap state)
         mapWidth = maxX - minX + 1

@@ -74,6 +74,7 @@ checkMarks (posicao:restoDasMarcas) mapaAtual
 -- | @param config GameConfig: A configuração do nível.
 -- | @param state GameState: O estado atual do jogo.
 -- | @return GameState: O novo estado do jogo. Se o movimento for inválido, retorna o estado original.
+-- ...
 handleMove :: Direction -> GameConfig -> GameState -> GameState
 handleMove direction config state =
     let
@@ -94,12 +95,12 @@ handleMove direction config state =
                 in
                     if tileAfterBox == Floor || tileAfterBox == Mark then
                         let newMap = updateMapAfterMove config state newPlayerPos (Just posAfterBox)
-                        in GameState newMap newPlayerPos (gsMoveCount state + 1)
+                        in GameState newMap newPlayerPos (gsMoveCount state + 1) (gsHistory state)
                     else
                         state
             _ ->
                 let newMap = updateMapAfterMove config state newPlayerPos Nothing
-                in GameState newMap newPlayerPos (gsMoveCount state + 1)
+                in GameState newMap newPlayerPos (gsMoveCount state + 1) (gsHistory state)
 
 
 -- | Função auxiliar para criar o novo Array do mapa após um movimento.
