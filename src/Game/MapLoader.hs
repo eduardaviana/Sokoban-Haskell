@@ -60,7 +60,7 @@ loadLevel difficultyName levelIndex = do
                 in
                     return
                         ( GameConfig difficultyName levelIndex markPositions
-                        , GameState mapGrid playerPos 0
+                        , GameState mapGrid playerPos 0 []
                         )
         Nothing -> do
             putStrLn $ "Falha ao decodificar o JSON: " ++ path
