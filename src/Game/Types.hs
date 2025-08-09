@@ -20,7 +20,7 @@ data Direction = Up | Down | GoLeft | GoRight deriving (Eq, Show)
 
 -- | Representa as ações que o jogador pode realizar durante o jogo.
 -- | Este tipo de dado melhora a segurança e clareza do código em comparação com o uso de 'Char'.
-data Action = Move Direction | Restart | Quit | NoOp deriving (Eq, Show)
+data Action = Move Direction | Restart | Quit | Undo | NoOp deriving (Eq, Show)
 
 -- | Define a configuração de um nível. Contém dados que NÃO mudam durante uma partida.
 -- | Agrupar estes dados em um record simplifica a passagem de parâmetros entre funções.
@@ -34,8 +34,9 @@ data GameConfig = GameConfig
 data GameState = GameState
   { gsMap       :: A.Array (Int, Int) Tile, 
     gsPlayerPos :: (Int, Int), 
-    gsMoveCount   :: Int
-  } deriving (Show)
+    gsMoveCount   :: Int,
+    gsHistory     :: [GameState]
+  } 
 
 -- | Tipo de dado auxiliar para a decodificação de um único nível do arquivo JSON.
 data LevelLocal = LevelLocal
