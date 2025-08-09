@@ -5,7 +5,7 @@ module Game.View (render) where
 import qualified Data.Array as A
 import System.FilePath (takeBaseName)
 import Game.Types
-import Game.Utils (drawBottomBorder, drawMiddleBorder, drawTopBorder, clearScreen, capitalize)
+import Game.Utils (drawBottomBorder, drawMiddleBorder, drawTopBorder, cleanTerminal, capitalize, white)
 
 
 -- | Função principal de renderização. Orquestra a limpeza e o desenho da tela completa do jogo.
@@ -14,7 +14,7 @@ import Game.Utils (drawBottomBorder, drawMiddleBorder, drawTopBorder, clearScree
 -- | @return IO (): Uma ação de I/O que desenha o jogo no terminal.
 render :: GameConfig -> GameState -> IO ()
 render config state = do
-    clearScreen
+    cleanTerminal
 
     let titulo = "SOKOBAN"
         nivel = "Nível: " ++ show (gcLevel config + 1)
@@ -34,20 +34,20 @@ render config state = do
         contentWidth = maximum [mapWidth, length statusLinha1, length statusLinha2, length ajuda, length titulo]
         panelWidth = contentWidth + 4 
 
-    drawTopBorder panelWidth
-    putStrLn $ "║" ++ padCenter (panelWidth - 2) titulo ++ "║"
-    drawMiddleBorder panelWidth
-    putStrLn $ "║" ++ padRight (panelWidth - 2) statusLinha1 ++ "║"
-    putStrLn $ "║" ++ padRight (panelWidth - 2) statusLinha2 ++ "║"
-    drawBottomBorder panelWidth
+    drawTopBorder white panelWidth
+    putStrLn $ white ("║" ++ padCenter (panelWidth - 2) titulo ++ "║")
+    drawMiddleBorder white panelWidth
+    putStrLn $ white ("║" ++ padRight (panelWidth - 2) statusLinha1 ++ "║")
+    putStrLn $ white ("║" ++ padRight (panelWidth - 2) statusLinha2 ++ "║")
+    drawBottomBorder white panelWidth
     putStrLn ""
 
     printMapInBox panelWidth config state
 
     putStrLn ""
-    drawTopBorder panelWidth
-    putStrLn $ "║" ++ padCenter (panelWidth - 2) ajuda ++ "║"
-    drawBottomBorder panelWidth
+    drawTopBorder white panelWidth
+    putStrLn $ white ("║" ++ padCenter (panelWidth - 2) ajuda ++ "║")
+    drawBottomBorder white panelWidth
 
 
 -- | Imprime o mapa do jogo dentro de uma caixa com bordas.
@@ -60,12 +60,12 @@ printMapInBox panelWidth config state = do
     let ((minY, minX), (maxY, maxX)) = A.bounds (gsMap state)
     let contentWidth = panelWidth - 2 -- Área útil dentro das bordas
 
-    drawTopBorder panelWidth
+    drawTopBorder white panelWidth
     mapM_ (\y -> do
         let mapLine = [getCharForPos (y, x) config state | x <- [minX..maxX]]
-        putStrLn $ "║" ++ padCenter contentWidth mapLine ++ "║"
+        putStrLn $ white ("║" ++ padCenter contentWidth mapLine ++ "║")
         ) [minY..maxY]
-    drawBottomBorder panelWidth
+    drawBottomBorder white panelWidth
 
 
 -- | Função pura que determina qual caractere deve ser exibido para uma dada coordenada.
