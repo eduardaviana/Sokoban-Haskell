@@ -26,10 +26,8 @@ import Game.Utils
 -- | @return IO (): Uma ação de IO que roda o jogo completo.
 start :: String -> Int -> IO ()
 start difficulty level = do
-    putStrLn "Carregando nível..."
-    -- Usa o MapLoader para obter a configuração e o estado inicial.
+    putStrLn $ cyan "Carregando nível..."
     (config, state) <- loadLevel difficulty level
-    -- Inicia o loop principal do jogo com os dados carregados.
     gameLoop config state
 
 
@@ -58,9 +56,9 @@ gameLoop config state = do
 handleAction :: Action -> GameConfig -> GameState -> IO ()
 handleAction action config state =
     case action of
-        Quit -> putStrLn "Saindo do nível..."
+        Quit -> putStrLn $ cyan "Saindo do nível..."
         Restart -> do
-            putStrLn "Reiniciando nível..."
+            putStrLn $ cyan "Reiniciando nível..."
             threadDelay 500000
             start (gcDifficulty config) (gcLevel config)
         NoOp ->
@@ -80,23 +78,23 @@ handleAction action config state =
 -- | @return IO (): Uma ação de I/O que inicia o próximo estágio do jogo.
 handleVictory :: GameConfig -> IO ()
 handleVictory config = do
-    putStrLn "Sucesso! Nível completo!"
+    putStrLn $ green "Sucesso! Nível completo!"
     threadDelay 1000000
     let currentDiff = gcDifficulty config
         nextLevelIndex = gcLevel config + 1
 
     if nextLevelIndex >= 5 then do
-        putStrLn $ "Você completou todos os níveis da dificuldade '" ++ takeBaseName currentDiff ++ "'!"
+        putStrLn $ green "Você completou todos os níveis da dificuldade '" ++ takeBaseName currentDiff ++ "'!"
         threadDelay 1000000
         if currentDiff == "dificil.json" then
-            putStrLn "PARABÉNS! Você completou o jogo!"
+            putStrLn $ green "PARABÉNS! Você completou o jogo!"
         else do
             let newDiff = nextDifficulty currentDiff
-            putStrLn $ "Avançando para a dificuldade '" ++ takeBaseName newDiff ++ "'..."
+            putStrLn $ green "Avançando para a dificuldade '" ++ takeBaseName newDiff ++ "'..."
             threadDelay 2000000
             start newDiff 0
     else do
-        putStrLn "Passando para o próximo nível..."
+        putStrLn $ green "Passando para o próximo nível..."
         threadDelay 1000000
         start currentDiff nextLevelIndex
 
@@ -105,12 +103,12 @@ handleVictory config = do
 actionMap :: Map.Map Char Action
 actionMap = Map.fromList
     [ ('w', Move Up), ('W', Move Up), 
-		  ('a', Move GoLeft), ('A', Move GoLeft),
-		  ('s', Move Down), ('S', Move Down), 
-			('d', Move GoRight), ('D', Move GoRight), 
-			('q', Quit), ('Q', Quit), 
-			('r', Restart), ('R', Restart), 
-			('u', Undo), ('U', Undo)
+      ('a', Move GoLeft), ('A', Move GoLeft),
+      ('s', Move Down), ('S', Move Down), 
+      ('d', Move GoRight), ('D', Move GoRight), 
+      ('q', Quit), ('Q', Quit), 
+      ('r', Restart), ('R', Restart), 
+      ('u', Undo), ('U', Undo)
     ]
     
 
