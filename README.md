@@ -1,6 +1,6 @@
 # Sokoban-Haskell
 
-gif do nosso joguinho :)
+gif do nosso joguinho ;)
 
 ## Descrição do Projeto
 
