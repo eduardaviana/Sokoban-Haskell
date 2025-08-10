@@ -1,6 +1,6 @@
 -- | Módulo que contém a lógica central do jogo, inclui funções para a movimentação do jogador, verificação de vitória e progressão de dificuldade.
 module Game.Engine (
-    update,
+    update, 
     isVictory,
     nextDifficulty
 ) where
@@ -10,7 +10,7 @@ import Game.Types
 
 
 -- | Função com casamento de padrão para os movimentos do jogador no mapa. Possui os parametros:
--- | @param tecla Direction: A tecla de direção pressionada
+-- | @param Direction: A direção escolhida pelo jogador
 -- | @return (Int, Int): Uma tupla com as mudanças de coordenadas
 directionToVector :: Direction -> (Int, Int)
 directionToVector Up = (-1, 0)
@@ -20,14 +20,14 @@ directionToVector GoRight = (0, 1)
 
 
 -- | Função que calcula o índice do próximo nível.
--- | @param nivel Int: O índice do nível atual.
+-- | @param Int: O índice do nível atual.
 -- | @return Int: O índice do próximo nível.
 nextLevel :: Int -> Int
 nextLevel level = if level < 4 then level + 1 else 0
 
 
 -- | Função com casamento de padrão para determinar a proxima dificuldade que o jogador deve ir
--- | @param dificuldadeAtual String: O nome do arquivo da dificuldade atual
+-- | @param String: O nome do arquivo da dificuldade atual
 -- | @return String: O nome do arquivo da sua próxima dificuldade, se não reconhecer a dificuldade por padrao irá para a facil
 nextDifficulty :: String -> String
 nextDifficulty "facil.json" = "medio.json"
@@ -47,8 +47,8 @@ update _ _ state = state
 
 
 -- | Verifica se a condição de vitória foi atingida.
--- | @param config GameConfig: A configuração que contém as posições dos alvos.
--- | @param state GameState: O estado atual que contém as posições das caixas.
+-- | @param config GameConfig: A configuração do jogo.
+-- | @param state GameState: O estado atual do jogo.
 -- | @return Bool: True se o jogador venceu, False caso contrário.
 isVictory :: GameConfig -> GameState -> Bool
 isVictory config state =
@@ -66,12 +66,11 @@ checkMarks (m:marks) currentMap
     | otherwise = checkMarks marks currentMap
 
 
--- | Lida com a lógica de um movimento do jogador.
+-- | Função que lida com a lógica de um movimento do jogador.
 -- | @param direction Direction: A direção na qual o jogador quer se mover.
 -- | @param config GameConfig: A configuração do nível.
 -- | @param state GameState: O estado atual do jogo.
 -- | @return GameState: O novo estado do jogo. Se o movimento for inválido, retorna o estado original.
--- ...
 handleMove :: Direction -> GameConfig -> GameState -> GameState
 handleMove direction config state =
     let
@@ -101,8 +100,8 @@ handleMove direction config state =
 
 
 -- | Função auxiliar para criar o novo Array do mapa após um movimento.
--- | @param config GameConfig: A configuração do nível (para saber onde estão os alvos).
--- | @param oldState GameState: O estado antes do movimento (para saber a posição antiga do jogador).
+-- | @param config GameConfig: A configuração do nível.
+-- | @param oldState GameState: O estado antes do movimento.
 -- | @param newPlayerPos (Int, Int): A nova posição do jogador.
 -- | @param newBoxPos (Maybe (Int, Int)): A nova posição da caixa, se uma foi movida.
 -- | @return A.Array (Int, Int) Tile: O novo grid do mapa.

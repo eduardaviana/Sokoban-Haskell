@@ -3,7 +3,7 @@
 
 -- | Módulo que lida com o carregamento de mapas a partir de arquivos JSON.
 module Game.MapLoader (loadLevel) where
-
+ 
 import qualified Data.Array as A
 import qualified Data.ByteString.Lazy as B
 import qualified Data.Aeson as Ae

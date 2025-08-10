@@ -1,5 +1,4 @@
 -- | Módulo responsável por toda a renderização do jogo no console.
--- | Ele é uma camada de "apresentação" que apenas lê o estado do jogo e o exibe.
 module Game.View (render) where
 
 import qualified Data.Array as A
@@ -13,7 +12,7 @@ import Game.Utils (drawBottomBorder, drawMiddleBorder, drawTopBorder, cleanTermi
 -- | @param state GameState: O estado atual e mutável do jogo (mapa, posição do jogador).
 -- | @return IO (): Uma ação de I/O que desenha o jogo no terminal.
 render :: GameConfig -> GameState -> IO ()
-render config state = do
+render config state = do 
     cleanTerminal
 
     let title = "SOKOBAN"
@@ -58,7 +57,7 @@ render config state = do
 printMapInBox :: Int -> GameConfig -> GameState -> IO ()
 printMapInBox panelWidth config state = do
     let ((minY, minX), (maxY, maxX)) = A.bounds (gsMap state)
-    let contentWidth = panelWidth - 2 -- Área útil dentro das bordas
+    let contentWidth = panelWidth - 2 
 
     drawTopBorder white panelWidth
     mapM_ (\y -> do
@@ -68,8 +67,7 @@ printMapInBox panelWidth config state = do
     drawBottomBorder white panelWidth
 
 
--- | Função pura que determina qual caractere deve ser exibido para uma dada coordenada.
--- | A lógica de exibição (cores, símbolos) é centralizada aqui.
+-- | Função que determina qual caractere deve ser exibido para uma dada coordenada.
 -- | @param pos (Int, Int): A coordenada (y, x) a ser avaliada.
 -- | @param config GameConfig: A configuração do nível (para saber onde estão os alvos).
 -- | @param state GameState: O estado do jogo (para saber a posição do jogador e das caixas).

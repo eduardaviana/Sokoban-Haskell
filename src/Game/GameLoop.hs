@@ -1,10 +1,4 @@
--- | Este módulo contém a lógica do loop principal do jogo Sokoban,
--- | responsável por gerenciar a interação do jogador, o estado do jogo e a
--- | progressão de níveis.
--- |
--- | O fluxo principal é orquestrado pela função 'gameLoop', que se chama
--- | recursivamente até que uma condição de término (vitória ou desistência)
--- | seja alcançada.
+-- | Este módulo contém a lógica do loop principal do jogo Sokoban, responsável por gerenciar a interação do jogador, o estado do jogo e a progressão de níveis.
 module Game.GameLoop (start, getCharInstant) where
 
 import qualified Data.Map.Strict as Map
@@ -32,8 +26,6 @@ start difficulty level = do
 
 
 -- | O loop principal e recursivo do jogo.
--- | A cada iteração, ele verifica a vitória, renderiza a tela e processa o input do jogador para determinar
--- | o próximo estado.
 -- | @param config GameConfig: A configuração imutável do nível.
 -- | @param state GameState: O estado atual do jogo.
 -- | @return IO (): Uma ação de I/O que continua o jogo.
@@ -109,7 +101,7 @@ actionMap = Map.fromList
       ('q', Quit), ('Q', Quit), 
       ('r', Restart), ('R', Restart), 
       ('u', Undo), ('U', Undo)
-    ]
+    ] 
     
 
 -- | Converte um Char de input em uma Ação de jogo usando o mapa.

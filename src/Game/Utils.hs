@@ -1,3 +1,4 @@
+-- | Módulo que contém funções utilitárias para interação com o terminal e formatação.
 module Game.Utils (
     cleanTerminal,
     capitalize,
@@ -12,7 +13,7 @@ module Game.Utils (
     magenta,
     cyan,
     white,
-    bold
+    bold 
 ) where
 
 import System.IO (hSetBuffering, BufferMode(LineBuffering), BufferMode(NoBuffering), stdin, stdout, hFlush, hSetEcho)
@@ -23,7 +24,6 @@ import Data.Char (toUpper)
 type TerminalColor = [SGR]
 
 -- | Limpa a tela do terminal e posiciona o cursor no canto superior esquerdo.
--- | A função 'clearScreen' do pacote 'ansi-terminal' é usada, pois é mais portável.
 -- | @return IO (): Uma ação de I/O que limpa a tela.
 cleanTerminal :: IO ()
 cleanTerminal = do
@@ -31,7 +31,7 @@ cleanTerminal = do
     setCursorPosition 0 0
 
 
--- | Função pura de formatação, utilizada para capitalizar a primeira letra de uma String
+-- | Função utilizada para capitalizar a primeira letra de uma String
 -- | @param palavra String: Uma String qualquer
 -- | @return String: A String capitalizada
 capitalize :: String -> String
@@ -78,8 +78,9 @@ getCharInstant = do
     return c
 
 
--- Funções para cores e formatação que retornam uma String.
--- Elas são úteis para colorir pequenas partes de uma linha.
+-- | Função para cores 
+-- | @param text String: O texto a ser formatado.
+-- | @return String: A string formatada com os códigos de cor.
 red, green, yellow, blue, magenta, cyan, white :: String -> String
 red text = setSGRCode [SetColor Foreground Vivid Red]      ++ text ++ setSGRCode [Reset]
 green text = setSGRCode [SetColor Foreground Vivid Green]    ++ text ++ setSGRCode [Reset]
@@ -89,6 +90,8 @@ magenta text = setSGRCode [SetColor Foreground Vivid Magenta] ++ text ++ setSGRC
 cyan text = setSGRCode [SetColor Foreground Vivid Cyan]    ++ text ++ setSGRCode [Reset]
 white text = setSGRCode [SetColor Foreground Vivid White]   ++ text ++ setSGRCode [Reset]
 
-
+-- | Função para formatação
+-- | @param text String: O texto a ser formatado.
+-- | @return String: A string formatada em negrito.
 bold :: String -> String
 bold text = setSGRCode [SetConsoleIntensity BoldIntensity] ++ text ++ setSGRCode [Reset]
