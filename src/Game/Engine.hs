@@ -47,26 +47,23 @@ update _ _ state = state
 
 
 -- | Verifica se a condição de vitória foi atingida.
--- | Esta versão usa a sua lógica de recursão explícita original, adaptada para os novos tipos.
 -- | @param config GameConfig: A configuração que contém as posições dos alvos.
 -- | @param state GameState: O estado atual que contém as posições das caixas.
 -- | @return Bool: True se o jogador venceu, False caso contrário.
 isVictory :: GameConfig -> GameState -> Bool
 isVictory config state =
-    -- A função principal apenas chama a sua função auxiliar com os dados corretos.
     checkMarks (gcMarkPos config) (gsMap state)
 
 
--- | Função auxiliar que implementa a sua lógica recursiva original.
--- | Percorre a lista de posições dos alvos, verificando se cada um tem uma caixa.
--- | @param posicoesMarcas [(Int, Int)]: A lista de alvos a verificar.
--- | @param mapaAtual A.Array (Int, Int) Tile: O mapa do jogo.
+-- | Função auxiliar que percorre a lista de posições dos alvos, verificando se cada um tem uma caixa.
+-- | @param marks [(Int, Int)]: A lista de alvos a verificar.
+-- | @param currentMap A.Array (Int, Int) Tile: O mapa do jogo.
 -- | @return Bool: O resultado da verificação.
 checkMarks :: [(Int, Int)] -> A.Array (Int, Int) Tile -> Bool
 checkMarks [] _ = True
-checkMarks (posicao:restoDasMarcas) mapaAtual
-    | not (mapaAtual A.! posicao == Box) = False
-    | otherwise = checkMarks restoDasMarcas mapaAtual
+checkMarks (m:marks) currentMap
+    | not (currentMap A.! m == Box) = False
+    | otherwise = checkMarks marks currentMap
 
 
 -- | Lida com a lógica de um movimento do jogador.

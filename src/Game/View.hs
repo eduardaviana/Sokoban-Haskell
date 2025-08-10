@@ -16,29 +16,29 @@ render :: GameConfig -> GameState -> IO ()
 render config state = do
     cleanTerminal
 
-    let titulo = "SOKOBAN"
-        nivel = "Nível: " ++ show (gcLevel config + 1)
-        dificuldade = "Dificuldade: " ++ capitalize (takeBaseName (gcDifficulty config))
-        statusLinha1 = nivel ++ " | " ++ dificuldade
+    let title = "SOKOBAN"
+        level = "Nível: " ++ show (gcLevel config + 1)
+        difficulty = "Dificuldade: " ++ capitalize (takeBaseName (gcDifficulty config))
+        statusLine1 = level ++ " | " ++ difficulty
 
-        totalCaixas = length (gcMarkPos config)
-        caixasNoLugar = length $ filter (\p -> (gsMap state) A.! p == Box) (gcMarkPos config)
-        statusCaixas = "Caixas no Alvo: " ++ show caixasNoLugar ++ "/" ++ show totalCaixas
-        statusMovimentos = "Movimentos: " ++ show (gsMoveCount state)
-        statusLinha2 = statusCaixas ++ " | " ++ statusMovimentos
+        totalBoxes = length (gcMarkPos config)
+        boxesInPlace = length $ filter (\p -> (gsMap state) A.! p == Box) (gcMarkPos config)
+        statusBoxes = "Caixas no Alvo: " ++ show boxesInPlace ++ "/" ++ show totalBoxes
+        statusMoves = "Movimentos: " ++ show (gsMoveCount state)
+        statusLine2 = statusBoxes ++ " | " ++ statusMoves
 
-        ajuda = "[W/A/S/D] Mover | [U] Desfazer | [R] Reiniciar | [Q] Sair"
+        help = "[W/A/S/D] Mover | [U] Desfazer | [R] Reiniciar | [Q] Sair"
 
     let ((_, minX), (_, maxX)) = A.bounds (gsMap state)
         mapWidth = maxX - minX + 1
-        contentWidth = maximum [mapWidth, length statusLinha1, length statusLinha2, length ajuda, length titulo]
-        panelWidth = contentWidth + 4 
+        contentWidth = maximum [mapWidth, length statusLine1, length statusLine2, length help, length title]
+        panelWidth = contentWidth + 4
 
     drawTopBorder white panelWidth
-    putStrLn $ white ("║" ++ padCenter (panelWidth - 2) titulo ++ "║")
+    putStrLn $ white ("║" ++ padCenter (panelWidth - 2) title ++ "║")
     drawMiddleBorder white panelWidth
-    putStrLn $ white ("║" ++ padRight (panelWidth - 2) statusLinha1 ++ "║")
-    putStrLn $ white ("║" ++ padRight (panelWidth - 2) statusLinha2 ++ "║")
+    putStrLn $ white ("║" ++ padRight (panelWidth - 2) statusLine1 ++ "║")
+    putStrLn $ white ("║" ++ padRight (panelWidth - 2) statusLine2 ++ "║")
     drawBottomBorder white panelWidth
     putStrLn ""
 
@@ -46,7 +46,7 @@ render config state = do
 
     putStrLn ""
     drawTopBorder white panelWidth
-    putStrLn $ white ("║" ++ padCenter (panelWidth - 2) ajuda ++ "║")
+    putStrLn $ white ("║" ++ padCenter (panelWidth - 2) help ++ "║")
     drawBottomBorder white panelWidth
 
 

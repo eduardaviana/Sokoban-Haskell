@@ -14,7 +14,7 @@ import System.FilePath (takeBaseName)
 import Control.Concurrent (threadDelay)
 import Game.Types
 import Game.Engine
-import Game.View
+import Game.View 
 import Game.MapLoader
 import Game.Utils
 
