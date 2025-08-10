@@ -72,7 +72,7 @@ Sokoban-Haskell/
 │   │   ├── MapLoader.hs # Carregamento e parsing dos mapas JSON.
 │   │   └── Utils.hs     # Funções utilitárias.
 ├── Sokoban-Haskell.cabal# Configuração do projeto Cabal.
-├── LICENSE              # Licença MIT.
+├── LICENSE              # Licença BSD 3-Clause.
 └── CHANGELOG.md         # Registro de mudanças.
 ```
 
@@ -99,4 +99,4 @@ O projeto segue **responsabilidade única** para cada módulo:
 ---
 
 ## 📜 Licença
-Este projeto é distribuído sob a licença MIT. Consulte o arquivo `LICENSE` para mais informações.
+Este projeto é distribuído sob a licença BSD 3-Clause. Consulte o arquivo `LICENSE` para mais informações.
